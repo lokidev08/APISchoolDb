@@ -13,6 +13,7 @@ namespace APISchool.Controllers
 {
     [ApiController]
     [AllowAnonymous]
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Route("[controller]")]
     public class LoginController : ControllerBase
     {
