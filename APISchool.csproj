@@ -7,6 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="bin\**" />
+    <Compile Remove="fastapi\**" />
+    <Compile Remove="frontend\**" />
+    <Compile Remove="obj\**" />
+    <Compile Remove="tmp-build\**" />
+    <Compile Remove="tools\**" />
+    <Content Remove="fastapi\**" />
+    <Content Remove="frontend\**" />
+    <Content Remove="tmp-build\**" />
+    <None Remove="fastapi\**" />
+    <None Remove="frontend\**" />
+    <None Remove="tmp-build\**" />
+    <None Remove="tools\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />

@@ -109,16 +109,38 @@ public class ColegioDbContext : DbContext
 
         try
         {
-            // Usar sp_set_context_info que es un SP built-in de SQL Server
+            var closeConnection = Database.GetDbConnection().State == System.Data.ConnectionState.Closed;
+
+            if (closeConnection)
+            {
+                await Database.OpenConnectionAsync(cancellationToken);
+            }
+
             await Database.ExecuteSqlRawAsync(
-                "EXEC sp_set_context_info @value={0}",
+                """
+                DECLARE @usuario NVARCHAR(128) = {0};
+                DECLARE @contextInfo VARBINARY(128) = CONVERT(VARBINARY(128), @usuario);
+
+                SET CONTEXT_INFO @contextInfo;
+                EXEC sp_set_session_context @key=N'Usuario', @value=@usuario;
+                """,
                 new[] { (object)username },
                 cancellationToken);
+
+            var result = await base.SaveChangesAsync(cancellationToken);
+
+            if (closeConnection)
+            {
+                await Database.CloseConnectionAsync();
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error en SESSION_CONTEXT: {ex.Message}");
         }
+
         return await base.SaveChangesAsync(cancellationToken);
     }
 }

@@ -56,6 +56,7 @@ function App() {
       }
 
       localStorage.setItem("apiToken", bearerToken);
+      localStorage.setItem("loginUsername", username);
       setToken(bearerToken);
 
       try {
@@ -78,6 +79,7 @@ function App() {
 
   const logout = () => {
     localStorage.removeItem("apiToken");
+    localStorage.removeItem("loginUsername");
     setToken("");
     setMessage("Sesion cerrada.");
   };

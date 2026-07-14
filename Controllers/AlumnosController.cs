@@ -73,8 +73,6 @@ public class AlumnosController : ControllerBase
         {
             return BadRequest("Número de identificación ya existe");
         }
-         _context.Entry(alumno).State = EntityState.Added;
-         _context.Alumnos.Add(alumno);
         _context.Alumnos.Add(alumno);
         await _context.SaveChangesAsync();
         return CreatedAtAction(nameof(Get), new { id = alumno.Id }, alumno);

@@ -3,9 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 public class Mandatory
 {
     public Guid Id { get; set; } = Guid.NewGuid();
-
     public DateTime CreatedAt { get; set; } = DateTime.Now;
-
     [Column(TypeName = "nvarchar(20)")]
     public required string CreatedBy { get; set; }
 
@@ -22,39 +20,28 @@ public class Curso : Mandatory
 public class Seccion : Mandatory
 {
     public Guid IdCurso { get; set; }
-
-    public required string Nombre { get; set; }
-
     public required Guid IdProfesorEncargado { get; set; }
-
+    public required string Nombre { get; set; }
     public required DateTime FechaInicio { get; set; }
-
     public required DateTime FechaFin { get; set; }
 }
 
 public class Alumno : Mandatory
 {
     public required string Nombre { get; set; }
-
     public required string Apellido { get; set; }
-
     [Column(TypeName = "nvarchar(1)")]
     public required string Sexo { get; set; }
-
     public required DateTime FechaNacimiento { get; set; }
-
     public required string NumeroIdentificacion { get; set; }
 }
 
 public class Profesor : Mandatory
 {
     public required string Nombre { get; set; }
-
     public required string Apellido { get; set; }
-
     [Column(TypeName = "nvarchar(1)")]
     public required string Sexo { get; set; }
-
     public required string Cedula { get; set; }
 }
 
@@ -94,8 +81,8 @@ public class ProfesorCreateRequest
 public class SeccionCreateRequest
 {
     public required Guid IdCurso { get; set; }
-    public required string Nombre { get; set; }
     public required Guid IdProfesorEncargado { get; set; }
+    public required string Nombre { get; set; }
     public required DateTime FechaInicio { get; set; }
     public required DateTime FechaFin { get; set; }
     public required string Status { get; set; }
