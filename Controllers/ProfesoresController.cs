@@ -87,7 +87,7 @@ public class ProfesoresController : ControllerBase
             Apellido = request.Apellido,
             Sexo = request.Sexo,
             Cedula = request.Cedula,
-            CreatedBy = username,
+            CreatedBy = string.IsNullOrWhiteSpace(request.CreatedBy) ? username : request.CreatedBy.Trim(),
             Status = request.Status
         };
         if (string.IsNullOrWhiteSpace(profesor.Nombre) || string.IsNullOrWhiteSpace(profesor.Apellido) || string.IsNullOrWhiteSpace(profesor.Sexo) || string.IsNullOrWhiteSpace(profesor.Cedula) || string.IsNullOrWhiteSpace(profesor.Status))

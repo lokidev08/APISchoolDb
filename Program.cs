@@ -17,6 +17,8 @@ var frontendOrigins = new[]
     "http://127.0.0.1:5173"
 };
 
+frontendOrigins = frontendOrigins.Concat(new[] { "http://localhost:5174", "http://127.0.0.1:5174" }).ToArray();
+
 builder.Services
     .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

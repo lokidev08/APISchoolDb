@@ -31,7 +31,7 @@ public class AsignaturaSeccionController : ControllerBase
             IdAsignatura = request.IdAsignatura,
             IdSeccion = request.IdSeccion,
             IdProfesor = request.IdProfesor,
-            CreatedBy = username,
+            CreatedBy = string.IsNullOrWhiteSpace(request.CreatedBy) ? username : request.CreatedBy.Trim(),
             Status = request.Status
         };
         if (asigSec.IdAsignatura == Guid.Empty || asigSec.IdSeccion == Guid.Empty || string.IsNullOrWhiteSpace(asigSec.Status))

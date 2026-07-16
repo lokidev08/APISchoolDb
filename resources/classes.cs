@@ -54,6 +54,7 @@ public class SeccionAlumno : Mandatory
 
 public class AlumnoCreateRequest
 {
+    public string? CreatedBy { get; set; }
     public required string Nombre { get; set; }
     public required string Apellido { get; set; }
     public required string Sexo { get; set; }
@@ -64,6 +65,7 @@ public class AlumnoCreateRequest
 
 public class CursoCreateRequest
 {
+    public string? CreatedBy { get; set; }
     public required string Nombre { get; set; }
     public required string anio { get; set; }
     public required string Status { get; set; }
@@ -71,6 +73,7 @@ public class CursoCreateRequest
 
 public class ProfesorCreateRequest
 {
+    public string? CreatedBy { get; set; }
     public required string Nombre { get; set; }
     public required string Apellido { get; set; }
     public required string Sexo { get; set; }
@@ -80,6 +83,7 @@ public class ProfesorCreateRequest
 
 public class SeccionCreateRequest
 {
+    public string? CreatedBy { get; set; }
     public required Guid IdCurso { get; set; }
     public required Guid IdProfesorEncargado { get; set; }
     public required string Nombre { get; set; }
@@ -90,6 +94,7 @@ public class SeccionCreateRequest
 
 public class SeccionAlumnoCreateRequest
 {
+    public string? CreatedBy { get; set; }
     public required Guid IdSeccion { get; set; }
     public required Guid IdAlumno { get; set; }
     public required string Status { get; set; }
@@ -102,6 +107,7 @@ public class Asignatura : Mandatory
 
 public class AsignaturaCreateRequest
 {
+    public string? CreatedBy { get; set; }
     public required string Nombre { get; set; }
     public required string Status { get; set; }
 }
@@ -115,6 +121,7 @@ public class AsignaturaSeccion : Mandatory
 
 public class AsignaturaSeccionCreateRequest
 {
+    public string? CreatedBy { get; set; }
     public required Guid IdAsignatura { get; set; }
     public required Guid IdSeccion { get; set; }
     public required Guid IdProfesor { get; set; }

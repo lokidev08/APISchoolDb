@@ -5,7 +5,7 @@ import Dashboard from "./Dashboard";
 import "./styles.css";
 
 const path = window.location.pathname;
-const Component = path === "/users/Dashboard" ? Dashboard : App;
+const Component = path.startsWith("/users/Dashboard") ? Dashboard : App;
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>

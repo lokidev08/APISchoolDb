@@ -46,7 +46,7 @@ public class SeccionesController : ControllerBase
             Nombre = request.Nombre,
             FechaInicio = request.FechaInicio,
             FechaFin = request.FechaFin,
-            CreatedBy = username,
+            CreatedBy = string.IsNullOrWhiteSpace(request.CreatedBy) ? username : request.CreatedBy.Trim(),
             Status = request.Status
         };
 

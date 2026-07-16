@@ -42,7 +42,7 @@ public class AsignaturasController : ControllerBase
         var asignatura = new Asignatura
         {
             Nombre = request.Nombre,
-            CreatedBy = username,
+            CreatedBy = string.IsNullOrWhiteSpace(request.CreatedBy) ? username : request.CreatedBy.Trim(),
             Status = request.Status
         };
 

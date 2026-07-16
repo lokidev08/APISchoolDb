@@ -43,7 +43,7 @@ public class SeccionesAlumnosController : ControllerBase
         {
             IdSeccion = request.IdSeccion,
             IdAlumno = request.IdAlumno,
-            CreatedBy = username,
+            CreatedBy = string.IsNullOrWhiteSpace(request.CreatedBy) ? username : request.CreatedBy.Trim(),
             Status = request.Status
         };
 

@@ -42,7 +42,7 @@ public class AlumnosController : ControllerBase
             Sexo = request.Sexo,
             FechaNacimiento = request.FechaNacimiento,
             NumeroIdentificacion = request.NumeroIdentificacion,
-            CreatedBy = username,
+            CreatedBy = string.IsNullOrWhiteSpace(request.CreatedBy) ? username : request.CreatedBy.Trim(),
             Status = request.Status
         };
         if (string.IsNullOrWhiteSpace(alumno.Nombre) || string.IsNullOrWhiteSpace(alumno.Apellido) || string.IsNullOrWhiteSpace(alumno.Sexo) || string.IsNullOrWhiteSpace(alumno.NumeroIdentificacion) || string.IsNullOrWhiteSpace(alumno.Status))

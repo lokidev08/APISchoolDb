@@ -48,7 +48,7 @@ public class CursosController : ControllerBase
         {
             Nombre = request.Nombre,
             anio = request.anio,
-            CreatedBy = username,
+            CreatedBy = string.IsNullOrWhiteSpace(request.CreatedBy) ? username : request.CreatedBy.Trim(),
             Status = request.Status
         };
         if (string.IsNullOrWhiteSpace(curso.Nombre) || string.IsNullOrWhiteSpace(curso.anio) || string.IsNullOrWhiteSpace(curso.Status))
