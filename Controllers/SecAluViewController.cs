@@ -18,7 +18,8 @@ public class SecAluViewController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AlumnoSeccionView>>> Get()
     {
-        return await _context.SecAluCur.ToListAsync();
+        var secAluCur = await _context.SecAluCur.ToListAsync();
+        return secAluCur;
     }
 
 }

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APISchool.Data;
-using APISchool;
 using System.Security.Claims;
+using APISchool;
 
 namespace APISchool.Controllers;
 

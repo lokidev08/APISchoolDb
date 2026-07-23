@@ -335,6 +335,31 @@ const fetchAsignaturasSecciones = async () => {
   }
 };
 
+  const fetchSecAluCur = async () => {
+    setLoading(true);
+    setMessage("");
+    try {
+      const response = await fetch(`${API_URL}/api/SecAluView`, {
+        headers: {
+          Authorization: token ? authHeader : "",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(await getApiError(response, "Error al cargar la vista SecAluCur"));
+      }
+
+      const data = await response.json();
+      setSecAluCur(Array.isArray(data) ? data : []);
+      setMessage("Vista SecAlu cargada exitosamente");
+    } catch (error) {
+      setMessage(`Error: ${error.message}`);
+      setSecAluCur([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const updateSearchField = (field, value) => {
     setSearchFields((current) => ({
       ...current,
@@ -3040,12 +3065,11 @@ const fetchAsignaturasSecciones = async () => {
             disabled={sectionsDisabled}
             onClick={() => {
               setActiveSection("VerSeccionAlumnos");
-              resetSeccionAlumnosForm();
-              fetchSeccionAlumnos();
+              fetchSecAluCur();
             }}
             style={sectionButtonStyle}
           >
-            ver
+            Ver
           </button>
           <button
             disabled={sectionsDisabled}
@@ -3093,35 +3117,33 @@ const fetchAsignaturasSecciones = async () => {
 
       {activeSection === "VerSeccionAlumnos" && (
         <div style={sectionStyle}>
-          <h2 style={{ color: "#ffffff" }}>Ver Todos los SeccionAlumnos</h2>
+          <h2 style={{ color: "#ffffff" }}>Ver estudiantes por sección</h2>
           {loading ? (
             <p style={{ color: "#e0e0e0" }}>Cargando...</p>
-          ) : SeccionAlumnos.length === 0 ? (
-            <p style={{ color: "#e0e0e0" }}>No hay seccionAlumnos</p>
+          ) : SecAluCur.length === 0 ? (
+            <p style={{ color: "#e0e0e0" }}>No hay datos en la vista SecAluCur</p>
           ) : (
             <div style={{ overflowX: "auto" }}>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ backgroundColor: "#1a1a1a", borderBottom: "2px solid #444444" }}>
-                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Id</th>
-                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Seccion</th>
-                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>NombreAlumno</th>
-                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>ApellidoAlumno</th>
+                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Nombre completo alumno</th>
                     <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Identificación</th>
-                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Creado por</th>
-                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Creado en</th>
+                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Curso</th>
+                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Sección</th>
+                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Año</th>
+                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Estado</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {SeccionAlumnos.map((seccionesAlumnos) => (
-                    <tr key={seccionesAlumnos.id} style={{ borderBottom: "1px solid #444444" }}>
-                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionesAlumnos.id}</td>
-                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionesAlumnos.Seccion}</td>
-                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionesAlumnos.NombreAlumno}</td>
-                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionesAlumnos.ApellidoAlumno}</td>
-                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionesAlumnos.Identificacion}</td>
-                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionesAlumnos.createdBy}</td>
-                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{new Date(seccionesAlumnos.createdAt).toLocaleString()}</td>
+                  {SecAluCur.map((SecAlu) => (
+                    <tr key={SecAlu} style={{ borderBottom: "1px solid #444444" }}>
+                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{SecAlu.nombreAlumno + ' ' + SecAlu.apellidoAlumno}</td>
+                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{SecAlu.identificacion}</td>
+                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{SecAlu.curso}</td>
+                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{SecAlu.seccion}</td>
+                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{SecAlu.anio}</td>
+                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{SecAlu.estado}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -3279,22 +3301,26 @@ const fetchAsignaturasSecciones = async () => {
             <p style={{ color: "#e0e0e0" }}>Cargando SeccionAlumnos...</p>
           ) : (
             <>
-              <p style={{ marginBottom: "15px", color: "#e0e0e0" }}>Seleccione un SeccionAlumno para eliminar:</p>
+              <p style={{ marginBottom: "15px", color: "#e0e0e0" }}>Seleccione un alumno para eliminar de la sección:</p>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ backgroundColor: "#1a1a1a", borderBottom: "2px solid #444444" }}>
-                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>IdSeccion</th>
-                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>IdAlumno</th>
+                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Nombre completo alumno</th>
+                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Identificación</th>
+                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Curso</th>
+                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Sección</th>
                     <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Estado</th>
                     <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Acción</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {SeccionAlumnos.map((seccionAlumno) => (
-                    <tr key={seccionAlumno.id} style={{ borderBottom: "1px solid #444444" }}>
-                      <td style={{ padding: "10px", color: "#e0e0e0" }}>{seccionAlumno.idSeccion}</td>
-                      <td style={{ padding: "10px", color: "#e0e0e0" }}>{seccionAlumno.idAlumno}</td>
-                      <td style={{ padding: "10px", color: "#e0e0e0" }}>{seccionAlumno.status}</td>
+                  {SecAluCur.map((SecAlu) => (
+                    <tr key={SecAlu} style={{ borderBottom: "1px solid #444444" }}>
+                      <td style={{ padding: "10px", color: "#e0e0e0" }}>{SecAlu.nombreAlumno + ' ' + SecAlu.apellidoAlumno}</td>
+                      <td style={{ padding: "10px", color: "#e0e0e0" }}>{SecAlu.identificacion}</td>
+                      <td style={{ padding: "10px", color: "#e0e0e0" }}>{SecAlu.curso}</td>
+                      <td style={{ padding: "10px", color: "#e0e0e0" }}>{SecAlu.seccion}</td>
+                      <td style={{ padding: "10px", color: "#e0e0e0" }}>{SecAlu.estado}</td>
                       <td style={{ padding: "10px", color: "#e0e0e0" }}>
                         <button onClick={() => setSeccionAlumnosToDelete(seccionAlumno)} style={{ padding: "6px 12px", backgroundColor: "#cc0000", color: "#e0e0e0", border: "none", borderRadius: "3px", cursor: "pointer" }}>Eliminar</button>
                       </td>

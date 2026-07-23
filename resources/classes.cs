@@ -153,11 +153,11 @@ public class AlumnoSeccionView
     public required Guid IdSeccion { get; set; }
     public required Guid IdAlumno { get; set; }
     public required Guid IdCurso { get; set; }
-    public string NombreAlumno { get; set; }
-    public string ApellidoAlumno { get; set; }
-    public string Identificacion { get; set; }
-    public string Curso { get; set; }
+    public required string NombreAlumno { get; set; }
+    public required string ApellidoAlumno { get; set; }
+    public required string Identificacion { get; set; }
+    public required string Curso { get; set; }
     public string Anio { get; set; }
-    public int Seccion { get; set; }
-    public bool Estado { get; set; }
+    public required string Seccion { get; set; }
+    public required string Estado { get; set; }
 }
