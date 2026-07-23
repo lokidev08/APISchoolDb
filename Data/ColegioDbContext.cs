@@ -23,6 +23,7 @@ public class ColegioDbContext : DbContext
     public DbSet<Asignatura> Asignaturas { get; set; } = null!;
     public DbSet<AsignaturaSeccion> AsignaturasSecciones { get; set; } = null!;
     public DbSet<Usuario> Usuarios { get; set; } = null!;
+    public DbSet<AlumnoSeccionView> SecAluCur { get; set; } = null!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -78,6 +79,7 @@ public class ColegioDbContext : DbContext
         modelBuilder.Entity<SeccionAlumno>().HasKey(e => e.Id);
         modelBuilder.Entity<Asignatura>().HasKey(e => e.Id);
         modelBuilder.Entity<AsignaturaSeccion>().HasKey(e => e.Id);
+        modelBuilder.Entity<AlumnoSeccionView>().ToView("vw_SecAlu").HasNoKey();
 
         modelBuilder.Entity<Seccion>()
             .HasOne<Curso>()

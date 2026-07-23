@@ -11,6 +11,7 @@ export default function Dashboard() {
   const [profesores, setProfesores] = useState([]);
   const [asignaturas, setAsignaturas] = useState([]);
   const [asignaturasSecciones, setAsignaturasSecciones] = useState([]);
+  const [SecAluCur, setSecAluCur] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [searchFields, setSearchFields] = useState({
@@ -61,6 +62,15 @@ export default function Dashboard() {
     idSeccion: "", 
     idProfesor: "", 
     status: ""
+  });
+  const [SecAluCurSearchFields, setSecAluCurSearchFields] = useState({
+    Seccion: "",
+    NombreAlumno: "",
+    ApellidoAlumno: "",
+    identificacion: "",
+    Curso: "",
+    Anio: "",
+    Estado: ""
   });
   const [editSearchId, setEditSearchId] = useState("");
   const [editCursoSearchId, setEditCursoSearchId] = useState("");
@@ -234,21 +244,24 @@ const fetchSeccionAlumnos = async () => {
   setLoading(true);
   setMessage("");
   try {
-    const response = await fetch(`${API_URL}/api/SeccionAlumnos`, {
+    const response = await fetch(`${API_URL}/api/SeccionesAlumnos`, {
       headers: {
         Authorization: token ? authHeader : "",
       },
     });
 
     if (!response.ok) {
-      throw new Error(await getApiError(response, "Error al cargar seccion alumnos"));
+      throw new Error(await getApiError(response, "Error al cargar seccion alumnos (SecAluCur)"));
     }
 
     const data = await response.json();
+    setSecAluCur(Array.isArray(data) ? data : []);
     setSeccionAlumnos(Array.isArray(data) ? data : []);
     setMessage("");
   } catch (error) {
     setMessage(`Error: ${error.message}`);
+    setSecAluCur([]);
+    setSeccionAlumnos([]);
   } finally {
     setLoading(false);
   }
@@ -636,12 +649,12 @@ const fetchAsignaturasSecciones = async () => {
     try {
       const response =
         field === "id"
-          ? await fetch(`${API_URL}/api/SeccionAlumnos/${rawValue.trim()}`, {
+          ? await fetch(`${API_URL}/api/SeccionesAlumnos/${rawValue.trim()}`, {
               headers: {
                 Authorization: token ? authHeader : "",
               },
             })
-          : await fetch(`${API_URL}/api/SeccionAlumnos`, {
+          : await fetch(`${API_URL}/api/SeccionesAlumnos`, {
               headers: {
                 Authorization: token ? authHeader : "",
               },
@@ -939,7 +952,7 @@ const fetchAsignaturasSecciones = async () => {
     setMessage("");
 
     try {
-      const response = await fetch(`${API_URL}/api/SeccionAlumnos/${editSeccionAlumnosSearchId}`, {
+      const response = await fetch(`${API_URL}/api/SeccionesAlumnos/${editSeccionAlumnosSearchId}`, {
         headers: {
           Authorization: token ? authHeader : "",
         },
@@ -1207,7 +1220,7 @@ const fetchAsignaturasSecciones = async () => {
     setMessage("");
 
     try {
-      const url = editingSeccionAlumnosId ? `${API_URL}/api/SeccionAlumnos/${editingSeccionAlumnosId}` : `${API_URL}/api/SeccionAlumnos`;
+      const url = editingSeccionAlumnosId ? `${API_URL}/api/SeccionesAlumnos/${editingSeccionAlumnosId}` : `${API_URL}/api/SeccionesAlumnos`;
       const method = editingSeccionAlumnosId ? "PUT" : "POST";
       const body = editingSeccionAlumnosId
         ? {
@@ -1240,7 +1253,7 @@ const fetchAsignaturasSecciones = async () => {
       setMessage(`Sección-Alumno ${editingSeccionAlumnosId ? "actualizada" : "creada"} correctamente`);
       setSeccionAlumnosFormData({ idSeccion: "", idAlumno: "", status: "", createdBy: "", createdAt: "" });
       setEditingSeccionAlumnosId(null);
-      await fetchSeccionAlumnos();
+      await fetchSeccionesAlumnos();
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     } finally {
@@ -1473,7 +1486,7 @@ const fetchAsignaturasSecciones = async () => {
     setMessage("");
 
     try {
-      const response = await fetch(`${API_URL}/api/SeccionAlumnos/${id}`, {
+      const response = await fetch(`${API_URL}/api/SeccionesAlumnos/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: token ? authHeader : "",
@@ -1486,7 +1499,7 @@ const fetchAsignaturasSecciones = async () => {
 
       setMessage("Sección-Alumno eliminada correctamente");
       setSeccionAlumnosToDelete(null);
-      await fetchSeccionAlumnos();
+      await fetchSeccionesAlumnos();
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     } finally {
@@ -2703,66 +2716,6 @@ const fetchAsignaturasSecciones = async () => {
         </div>
       )}
 
-      <div style={{ ...sectionStyle, backgroundColor: "#1f1f1f", borderColor: "#444444" }}>
-        <h2 style={{ color: "#ffffff" }}>Secciones</h2>
-        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}>
-          <button
-            disabled={sectionsDisabled}
-            onClick={() => {
-              setActiveSection("VerSecciones");
-              resetSeccionForm();
-              fetchSecciones();
-            }}
-            style={sectionButtonStyle}
-          >
-            Ver
-          </button>
-          <button
-            disabled={sectionsDisabled}
-            onClick={() => {
-              setActiveSection("BuscarSecciones");
-              resetSeccionForm();
-              setSecciones([]);
-            }}
-            style={sectionButtonStyle}
-          >
-            Buscar
-          </button>
-          <button
-            disabled={sectionsDisabled}
-            onClick={() => {
-              setActiveSection("crearSeccion");
-              resetSeccionForm();
-            }}
-            style={sectionButtonStyle}
-          >
-            Crear
-          </button>
-          <button
-            disabled={sectionsDisabled}
-            onClick={() => {
-              setActiveSection("editarSeccion");
-              resetSeccionForm();
-              setSecciones([]);
-            }}
-            style={sectionButtonStyle}
-          >
-            Editar
-          </button>
-          <button
-            disabled={sectionsDisabled}
-            onClick={() => {
-              setActiveSection("eliminarSeccion");
-              resetSeccionForm();
-              fetchSecciones();
-            }}
-            style={sectionButtonStyle}
-          >
-            Eliminar
-          </button>
-        </div>
-      </div>
-
       {activeSection === "VerSecciones" && (
         <div style={sectionStyle}>
           <h2 style={{ color: "#ffffff" }}>Ver Secciones</h2>
@@ -2845,7 +2798,7 @@ const fetchAsignaturasSecciones = async () => {
                 type="text"
                 value={seccionSearchFields.curso}
                 onChange={(e) => updateSeccionSearchField("curso", e.target.value)}
-                placeholder="Nombre del curso"
+                placeholder="Id del curso de la sección"
                 style={inputStyle}
               />
               <button type="submit" disabled={loading} style={{ ...buttonStyle, backgroundColor: "#0066cc" }}>
@@ -2897,6 +2850,8 @@ const fetchAsignaturasSecciones = async () => {
                 type="text"
                 value={seccionFormData.nombre}
                 onChange={(e) => setSeccionFormData({ ...seccionFormData, nombre: e.target.value })}
+                required
+                style={inputStyle}
               />
             </div>
             <div>
@@ -3082,10 +3037,10 @@ const fetchAsignaturasSecciones = async () => {
         <h2 style={{ color: "#ffffff" }}>SeccionAlumnos</h2>
         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}>
           <button
-            disabled={seccionAlumnosDisabled}
+            disabled={sectionsDisabled}
             onClick={() => {
               setActiveSection("VerSeccionAlumnos");
-              resetSeccionAlumnoForm();
+              resetSeccionAlumnosForm();
               fetchSeccionAlumnos();
             }}
             style={sectionButtonStyle}
@@ -3093,40 +3048,40 @@ const fetchAsignaturasSecciones = async () => {
             ver
           </button>
           <button
-            disabled={seccionAlumnosDisabled}
+            disabled={sectionsDisabled}
             onClick={() => {
               setActiveSection("BuscarSeccionAlumnos");
-              resetSeccionAlumnoForm();
+              resetSeccionAlumnosForm();
             }}
             style={sectionButtonStyle}
           >
             Buscar
           </button>
           <button
-            disabled={seccionAlumnosDisabled}
+            disabled={sectionsDisabled}
             onClick={() => {
               setActiveSection("crearSeccionAlumno");
-              resetSeccionAlumnoForm();
+              resetSeccionAlumnosForm();
             }}
             style={sectionButtonStyle}
           >
             Crear
           </button>
           <button
-            disabled={seccionAlumnosDisabled}
+            disabled={sectionsDisabled}
             onClick={() => {
               setActiveSection("editarSeccionAlumno");
-              resetSeccionAlumnoForm();
+              resetSeccionAlumnosForm();
             }}
             style={sectionButtonStyle}
           >
             Editar
           </button>
           <button
-            disabled={seccionAlumnosDisabled}
+            disabled={sectionsDisabled}
             onClick={() => {
               setActiveSection("eliminarSeccionAlumno");
-              resetSeccionAlumnoForm();
+              resetSeccionAlumnosForm();
               fetchSeccionAlumnos();
             }}
             style={sectionButtonStyle}
@@ -3141,7 +3096,7 @@ const fetchAsignaturasSecciones = async () => {
           <h2 style={{ color: "#ffffff" }}>Ver Todos los SeccionAlumnos</h2>
           {loading ? (
             <p style={{ color: "#e0e0e0" }}>Cargando...</p>
-          ) : seccionAlumnos.length === 0 ? (
+          ) : SeccionAlumnos.length === 0 ? (
             <p style={{ color: "#e0e0e0" }}>No hay seccionAlumnos</p>
           ) : (
             <div style={{ overflowX: "auto" }}>
@@ -3149,20 +3104,24 @@ const fetchAsignaturasSecciones = async () => {
                 <thead>
                   <tr style={{ backgroundColor: "#1a1a1a", borderBottom: "2px solid #444444" }}>
                     <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Id</th>
-                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>IdSeccion</th>
-                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>IdAlumno</th>
+                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Seccion</th>
+                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>NombreAlumno</th>
+                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>ApellidoAlumno</th>
+                    <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Identificación</th>
                     <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Creado por</th>
                     <th style={{ padding: "10px", textAlign: "left", color: "#ffffff" }}>Creado en</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {seccionAlumnos.map((seccionAlumno) => (
-                    <tr key={seccionAlumno.id} style={{ borderBottom: "1px solid #444444" }}>
-                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionAlumno.id}</td>
-                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionAlumno.idSeccion}</td>
-                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionAlumno.idAlumno}</td>
-                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionAlumno.creadoPor}</td>
-                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{new Date(seccionAlumno.creadoEn).toLocaleString()}</td>
+                  {SeccionAlumnos.map((seccionesAlumnos) => (
+                    <tr key={seccionesAlumnos.id} style={{ borderBottom: "1px solid #444444" }}>
+                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionesAlumnos.id}</td>
+                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionesAlumnos.Seccion}</td>
+                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionesAlumnos.NombreAlumno}</td>
+                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionesAlumnos.ApellidoAlumno}</td>
+                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionesAlumnos.Identificacion}</td>
+                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{seccionesAlumnos.createdBy}</td>
+                      <td style={{ padding: "10px", textAlign: "left", color: "#e0e0e0" }}>{new Date(seccionesAlumnos.createdAt).toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -3180,26 +3139,70 @@ const fetchAsignaturasSecciones = async () => {
               <label style={labelStyle}>Buscar por ID:</label>
               <input
                 type="text"
-                value={seccionAlumnoSearchFields.id}
-                onChange={(e) => updateSeccionAlumnoSearchField("id", e.target.value)}
+                value={seccionAlumnosSearchFields.id}
+                onChange={(e) => updateSeccionAlumnosSearchField("id", e.target.value)}
                 placeholder="ID completo del seccionAlumno"
                 style={inputStyle}
               />
+              <button type="submit" disabled={loading} style={{ ...buttonStyle, backgroundColor: "#0066cc" }}>
+                Buscar ID
+              </button>
+            </form>
+
+            <form onSubmit={(e) => searchSeccionAlumnos(e, "idSeccion")}>
+              <label style={labelStyle}>Buscar por IdSeccion:</label>
+              <input
+                type="text"
+                value={seccionAlumnosSearchFields.idSeccion}
+                onChange={(e) => updateSeccionAlumnosSearchField("idSeccion", e.target.value)}
+                placeholder="Id de la sección del seccionAlumno"
+                style={inputStyle}
+              />  
+              <button type="submit" disabled={loading} style={{ ...buttonStyle, backgroundColor: "#0066cc" }}>
+                Buscar IdSeccion
+              </button>
+            </form>
+
+            <form onSubmit={(e) => searchSeccionAlumnos(e, "idAlumno")}>
+              <label style={labelStyle}>Buscar por IdAlumno:</label>
+              <input
+                type="text"
+                value={seccionAlumnosSearchFields.idAlumno}
+                onChange={(e) => updateSeccionAlumnosSearchField("idAlumno", e.target.value)}
+                placeholder="Id del alumno del seccionAlumno"
+                style={inputStyle}
+              />
+              <button type="submit" disabled={loading} style={{ ...buttonStyle, backgroundColor: "#0066cc" }}>
+                Buscar IdAlumno
+              </button>
             </form>
           </div>
+          {SeccionAlumnos.length > 0 && (
+            <div style={{ marginTop: "20px", border: "1px solid #444444", padding: "15px", borderRadius: "4px", backgroundColor: "#333333" }}>
+              {SeccionAlumnos.map((seccionAlumno) => (
+                <div key={seccionAlumno.id} style={{ color: "#e0e0e0", wordBreak: "break-word" }}>
+                  <p><strong style={{ color: "#ffffff" }}>ID:</strong> {seccionAlumno.id}</p>
+                  <p><strong style={{ color: "#ffffff" }}>IdSeccion:</strong> {seccionAlumno.idSeccion}</p>
+                  <p><strong style={{ color: "#ffffff" }}>IdAlumno:</strong> {seccionAlumno.idAlumno}</p>
+                  <p><strong style={{ color: "#ffffff" }}>Creado por:</strong> {seccionAlumno.createdBy}</p>
+                  <p><strong style={{ color: "#ffffff" }}>Creado en:</strong> {seccionAlumno.createdAt ? new Date(seccionAlumno.createdAt).toLocaleString() : ""}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
       
       {activeSection === "crearSeccionAlumno" && (
         <div style={sectionStyle}>
           <h2 style={{ color: "#ffffff" }}>Crear Nuevo SeccionAlumno</h2>
-          <form onSubmit={handleSubmitSeccionAlumno} style={{ maxWidth: "500px" }}>
+          <form onSubmit={handleSubmitSeccionAlumnos} style={{ maxWidth: "500px" }}>
             <div>
               <label style={labelStyle}>Id Sección:</label>
               <input
                 type="text"
-                value={seccionAlumnoFormData.idSeccion}
-                onChange={(e) => setSeccionAlumnoFormData({ ...seccionAlumnoFormData, idSeccion: e.target.value })}
+                value={seccionAlumnosFormData.idSeccion}
+                onChange={(e) => setSeccionAlumnosFormData({ ...seccionAlumnosFormData, idSeccion: e.target.value })}
                 required
                 style={inputStyle}
               />
@@ -3208,15 +3211,13 @@ const fetchAsignaturasSecciones = async () => {
               <label style={labelStyle}>Id Alumno:</label>
               <input
                 type="text"
-                value={seccionAlumnoFormData.idAlumno}
-                onChange={(e) => setSeccionAlumnoFormData({ ...seccionAlumnoFormData, idAlumno: e.target.value })}
+                value={seccionAlumnosFormData.idAlumno}
+                onChange={(e) => setSeccionAlumnosFormData({ ...seccionAlumnosFormData, idAlumno: e.target.value })}
                 required
                 style={inputStyle}
               />
             </div>
-            <button type="submit" style={submitButtonStyle}>
-              Crear SeccionAlumno
-            </button>
+            <button type="submit" disabled={loading} style={{ ...buttonStyle, backgroundColor: "#28a745", opacity: loading ? 0.6 : 1, cursor: loading ? "not-allowed" : "pointer" }}>{editingAsignaturaId ? "Actualizar" : "Crear"}</button>
           </form>
         </div>
       )}
@@ -3224,13 +3225,13 @@ const fetchAsignaturasSecciones = async () => {
       {activeSection === "editarSeccionAlumno" && (
         <div style={sectionStyle}>
           <h2 style={{ color: "#ffffff" }}>Editar SeccionAlumno</h2>
-          <form onSubmit={handleEditSeccionAlumno} style={{ maxWidth: "500px" }}>
+          <form onSubmit={handleEditSeccionAlumnos} style={{ maxWidth: "500px" }}>
             <div>
               <label style={labelStyle}>Id SeccionAlumno:</label>
               <input
                 type="text"
-                value={seccionAlumnoFormData.id}
-                onChange={(e) => setSeccionAlumnoFormData({ ...seccionAlumnoFormData, id: e.target.value })}
+                value={seccionAlumnosFormData.id}
+                onChange={(e) => setSeccionAlumnosFormData({ ...seccionAlumnosFormData, id: e.target.value })}
                 required
                 style={inputStyle}
               />
@@ -3239,8 +3240,8 @@ const fetchAsignaturasSecciones = async () => {
               <label style={labelStyle}>Id Sección:</label>
               <input
                 type="text"
-                value={seccionAlumnoFormData.idSeccion}
-                onChange={(e) => setSeccionAlumnoFormData({ ...seccionAlumnoFormData, idSeccion: e.target.value })}
+                value={seccionAlumnosFormData.idSeccion}
+                onChange={(e) => setSeccionAlumnosFormData({ ...seccionAlumnosFormData, idSeccion: e.target.value })}
                 required
                 style={inputStyle}
               />
@@ -3249,8 +3250,8 @@ const fetchAsignaturasSecciones = async () => {
               <label style={labelStyle}>Id Alumno:</label>
               <input
                 type="text"
-                value={seccionAlumnoFormData.idAlumno}
-                onChange={(e) => setSeccionAlumnoFormData({ ...seccionAlumnoFormData, idAlumno: e.target.value })}
+                value={seccionAlumnosFormData.idAlumno}
+                onChange={(e) => setSeccionAlumnosFormData({ ...seccionAlumnosFormData, idAlumno: e.target.value })}
                 required
                 style={inputStyle}
               />
@@ -3258,17 +3259,15 @@ const fetchAsignaturasSecciones = async () => {
             <div>
               <label style={labelStyle}>Estado:</label>
               <select
-                value={seccionAlumnoFormData.status}
-                onChange={(e) => setSeccionAlumnoFormData({ ...seccionAlumnoFormData, status: e.target.value })}
+                value={seccionAlumnosFormData.status}
+                onChange={(e) => setSeccionAlumnosFormData({ ...seccionAlumnosFormData, status: e.target.value })}
                 style={{ ...inputStyle, appearance: "none", paddingRight: "30px" }}
               >
                 <option value="Activo" style={{ backgroundColor: "#333333", color: "#e0e0e0" }}>Activo</option>
                 <option value="Inactivo" style={{ backgroundColor: "#333333", color: "#e0e0e0" }}>Inactivo</option>
               </select>
             </div>
-            <button type="submit" style={submitButtonStyle}>
-              Actualizar SeccionAlumno
-            </button>
+            <button type="submit" disabled={loading} style={{ ...buttonStyle, backgroundColor: "#0066cc", opacity: loading ? 0.6 : 1, cursor: loading ? "not-allowed" : "pointer" }}>Buscar para editar</button>
           </form>
         </div>
       )}
@@ -3276,11 +3275,11 @@ const fetchAsignaturasSecciones = async () => {
       {activeSection === "eliminarSeccionAlumno" && (
         <div style={sectionStyle}>
           <h2 style={{ color: "#ffffff" }}>Eliminar SeccionAlumno</h2>
-          {seccionAlumnos.length === 0 ? (
-            <p style={{ color: "#e0e0e0" }}>Cargando seccionAlumnos...</p>
+          {SeccionAlumnos.length === 0 ? (
+            <p style={{ color: "#e0e0e0" }}>Cargando SeccionAlumnos...</p>
           ) : (
             <>
-              <p style={{ marginBottom: "15px", color: "#e0e0e0" }}>Seleccione un seccionAlumno para eliminar:</p>
+              <p style={{ marginBottom: "15px", color: "#e0e0e0" }}>Seleccione un SeccionAlumno para eliminar:</p>
               <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>
                   <tr style={{ backgroundColor: "#1a1a1a", borderBottom: "2px solid #444444" }}>
@@ -3291,18 +3290,13 @@ const fetchAsignaturasSecciones = async () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {seccionAlumnos.map((seccionAlumno) => (
+                  {SeccionAlumnos.map((seccionAlumno) => (
                     <tr key={seccionAlumno.id} style={{ borderBottom: "1px solid #444444" }}>
                       <td style={{ padding: "10px", color: "#e0e0e0" }}>{seccionAlumno.idSeccion}</td>
                       <td style={{ padding: "10px", color: "#e0e0e0" }}>{seccionAlumno.idAlumno}</td>
                       <td style={{ padding: "10px", color: "#e0e0e0" }}>{seccionAlumno.status}</td>
                       <td style={{ padding: "10px", color: "#e0e0e0" }}>
-                        <button
-                          onClick={() => handleDeleteSeccionAlumno(seccionAlumno.id)}
-                          style={deleteButtonStyle}
-                        >
-                          Eliminar
-                        </button>
+                        <button onClick={() => setSeccionAlumnosToDelete(seccionAlumno)} style={{ padding: "6px 12px", backgroundColor: "#cc0000", color: "#e0e0e0", border: "none", borderRadius: "3px", cursor: "pointer" }}>Eliminar</button>
                       </td>
                     </tr>
                   ))}
@@ -3311,7 +3305,7 @@ const fetchAsignaturasSecciones = async () => {
             </>
           )}
 
-          {seccionAlumnoToDelete && (
+          {seccionAlumnosToDelete && (
             <div style={{
               marginTop: "20px",
               padding: "15px",
@@ -3322,14 +3316,14 @@ const fetchAsignaturasSecciones = async () => {
             }}>
               <div style={{ color: "#ffffff" }}>
                 <p style={{ margin: 0 }}><strong>Confirme eliminación de la relación Sección-Alumno:</strong></p>
-                <p><strong>IdSeccion:</strong> {seccionAlumnoToDelete.idSeccion || seccionAlumnoToDelete.IdSeccion}</p>
-                <p><strong>IdAlumno:</strong> {seccionAlumnoToDelete.idAlumno || seccionAlumnoToDelete.IdAlumno}</p>
-                <p><strong>Estado:</strong> {seccionAlumnoToDelete.status || seccionAlumnoToDelete.Status}</p>
-                <p><strong>Creado por:</strong> {seccionAlumnoToDelete.createdBy}</p>
+                <p><strong>IdSeccion:</strong> {seccionAlumnosToDelete.idSeccion || seccionAlumnosToDelete.IdSeccion}</p>
+                <p><strong>IdAlumno:</strong> {seccionAlumnosToDelete.idAlumno || seccionAlumnosToDelete.IdAlumno}</p>
+                <p><strong>Estado:</strong> {seccionAlumnosToDelete.status || seccionAlumnosToDelete.Status}</p>
+                <p><strong>Creado por:</strong> {seccionAlumnosToDelete.createdBy}</p>
               </div>
               <div style={{ marginTop: "10px" }}>
                 <button
-                  onClick={() => handleDeleteSeccionAlumno(seccionAlumnoToDelete.id)}
+                  onClick={() => handleDeleteSeccionAlumno(seccionAlumnosToDelete.id)}
                   disabled={loading}
                   style={{
                     padding: "8px 16px",
@@ -3345,7 +3339,7 @@ const fetchAsignaturasSecciones = async () => {
                   Confirmar Eliminación
                 </button>
                 <button
-                  onClick={() => setSeccionAlumnoToDelete(null)}
+                  onClick={() => setSeccionAlumnosToDelete(null)}
                   style={{
                     padding: "8px 16px",
                     backgroundColor: "#555555",
@@ -3775,7 +3769,7 @@ const fetchAsignaturasSecciones = async () => {
         <h2 style={{ color: "#ffffff" }}>Profesores</h2>
         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "flex-start" }}>
           <button
-            disabled={profesoresDisabled}
+            disabled={sectionsDisabled}
             onClick={() => {
               setActiveSection("VerProfesores");
               resetProfesorForm();
@@ -3786,7 +3780,7 @@ const fetchAsignaturasSecciones = async () => {
             ver
           </button>
           <button
-            disabled={profesoresDisabled}
+            disabled={sectionsDisabled}
             onClick={() => {
               setActiveSection("BuscarProfesores");
               resetProfesorForm();
@@ -3796,7 +3790,7 @@ const fetchAsignaturasSecciones = async () => {
             Buscar
           </button>
           <button
-            disabled={profesoresDisabled}
+            disabled={sectionsDisabled}
             onClick={() => {
               setActiveSection("crearProfesor");
               resetProfesorForm();
@@ -3806,7 +3800,7 @@ const fetchAsignaturasSecciones = async () => {
             Crear
           </button>
           <button
-            disabled={profesoresDisabled}
+            disabled={sectionsDisabled}
             onClick={() => {
               setActiveSection("editarProfesor");
               resetProfesorForm();
@@ -3816,7 +3810,7 @@ const fetchAsignaturasSecciones = async () => {
             Editar
           </button>
           <button
-            disabled={profesoresDisabled}
+            disabled={sectionsDisabled}
             onClick={() => {
               setActiveSection("eliminarProfesor");
               resetProfesorForm();

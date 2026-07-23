@@ -23,7 +23,8 @@ public class SeccionesAlumnosController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<SeccionAlumno>>> Get()
     {
-        return await _context.SeccionesAlumnos.ToListAsync();
+        var seccionesAlumnos = await _context.SeccionesAlumnos.ToListAsync();
+        return seccionesAlumnos;
     }
 
     [HttpGet("{id}")]
