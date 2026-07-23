@@ -244,14 +244,14 @@ const fetchSeccionAlumnos = async () => {
   setLoading(true);
   setMessage("");
   try {
-    const response = await fetch(`${API_URL}/api/SeccionesAlumnos`, {
+    const response = await fetch(`${API_URL}/api/SecAluView`, {
       headers: {
         Authorization: token ? authHeader : "",
       },
     });
 
     if (!response.ok) {
-      throw new Error(await getApiError(response, "Error al cargar seccion alumnos (SecAluCur)"));
+      throw new Error(await getApiError(response, "Error al cargar la vista SecAluCur"));
     }
 
     const data = await response.json();
